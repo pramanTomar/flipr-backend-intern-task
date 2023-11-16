@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, mongo } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 const purchaseSchema = Schema({
   product_name: {
     type: String,

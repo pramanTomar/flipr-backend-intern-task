@@ -76,3 +76,41 @@ export const addPurchaseDetails = async (req, res) => {
     res.send(error(500, "Something went wrong"));
   }
 };
+
+export const customer_all_purchaseOrder = async (req, res) => {
+  try {
+    const response = await PurchaseDetails.aggregate([
+      {
+        $lookup: {
+          from: "purchase", // The name of the collection to join with
+          localField: "customer_id", // The field from the customer collection
+          foreignField: "purchase_order_id", // The field from the purchase_order_details collection
+          as: "purchaseOrders", // The alias for the result array
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field from the result
+          customer_id: 1,
+          // Include other customer fields as needed
+          purchaseOrders: {
+            $map: {
+              input: "$purchaseOrders",
+              as: "order",
+              in: {
+                purchaseOrderId: "$$order.purchase_order_id",
+                productName: "$$order.product_name",
+                quantity: "$$order.quantity",
+                // Include other purchase order fields as needed
+              },
+            },
+          },
+        },
+      },
+    ]);
+    res.send(success(201, response));
+  } catch (error) {
+    console.log(error);
+    res.send(error(500, "something went wrong"));
+  }
+};
