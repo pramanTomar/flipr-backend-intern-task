@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors'
 import morgan from 'morgan';
 import dbConnect from './dbConnect.js';
+import routes from './routes/index.js';
 
 const app = express();
 dotenv.config('./.env');
@@ -13,6 +14,10 @@ app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000',
 }));
+
+
+// using routes
+app.use(routes);
 
 
 app.get('/', (req, res) => {
