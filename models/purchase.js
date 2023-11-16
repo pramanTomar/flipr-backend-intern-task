@@ -17,11 +17,14 @@ const purchaseSchema = Schema({
     require: true,
   },
   purchase_order_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
+    default: new mongoose.Types.ObjectId(),
+    require: true,
   },
   customer_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "customer",
+    type: String,
+    require: true,
   },
 });
-module.exports = mongoose.model("purchase", purchaseSchema);
+const PurchaseDetails = mongoose.model("purchase", purchaseSchema);
+export default PurchaseDetails;

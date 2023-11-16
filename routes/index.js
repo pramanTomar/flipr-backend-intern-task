@@ -1,8 +1,14 @@
-import express from 'express';
-import { addCustomer } from '../controllers/index.js';
+import express from "express";
+import {
+  addCustomer,
+  addPurchaseDetails,
+  addShippingDetails,
+} from "../controllers/index.js";
 
 const Router = express.Router();
 
-Router.get('/', addCustomer);
+Router.post("/addCustomer", addCustomer);
+Router.post("/addShippingDetails", addShippingDetails);
+Router.post("/addPurchaseDetails", addPurchaseDetails);
 
 export default Router;

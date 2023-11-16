@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 
 dotenv.config('./.env');
 
-const mongooseUri = process.env.MONGOOSE_URL;
+const mongooseUrl = process.env.MONGOOSE_URL;
 
 export default () => {
     try {
-        mongoose.connect(mongooseUri,
+        mongoose.connect(mongooseUrl,
         ).then(console.log("MongoDB Connected"));
     } catch (error) {
         console.log(error);

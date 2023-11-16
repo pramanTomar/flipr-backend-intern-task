@@ -1,26 +1,30 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
 const customerSchema = Schema({
-    email: {
-        type: String,
-        require: true,
-        lowercase: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        require: true
-    },
-    firstName: {
-        type: String,
-        require: true
-    },
-    lastName: {
-        type: String,
-        require: true
-    }
+  customer_name: {
+    type: String,
+    require: true,
+  },
+  email: {
+    type: String,
+    require: true,
+  },
+  mobile: {
+    type: Number,
+    require: true,
+  },
+  city: {
+    type: String,
+    require: true,
+  },
+  customer_id: {
+    type: String,
+    default: new mongoose.Types.ObjectId(),
+    unique: true,
+  },
 });
 
-const Customer = model('customer', customerSchema);
+const CustomerDetails = model("customer", customerSchema);
 
-export default Customer;
+export default CustomerDetails;
