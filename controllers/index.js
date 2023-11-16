@@ -1,36 +1,55 @@
-import Customer from '../models/customer.js';
+import CustomerDetails from '../models/customerDetails.js';
+import ShippingDetails from "../models/shippingDetails.js";
+import {error, success} from "../Utils/response.js";
 
-export const addCustomer = async () => {
+export const addCustomer = async (req, res) => {
     try {
-        // const { email, password, firstName, lastName, generatedOtp, enteredOtp } = req.body;
+        const { customer_name, email, mobile, city } = req.body;
+        
+        if (!customer_name || !email || !mobile || !city ) res.send(error(500, "All fields are required"));
 
-        // if (!email || !password || !firstName || !lastName || !enteredOtp) {
-        //     res.send(error(400, "All fields are required"));
-        // }
+        if(mobile.length !== 10) res.send(error(500, "Invalid Mobile Number"));
 
-        // const existing_user = await user.findOne({ email });
-        // if (existing_user) {
-        //     res.send(error(409, "User already exist!!"))
-        //     return;
-        //     // res.status(409).send("!! User already exists !!");
-        // }
-        // if (enteredOtp != generatedOtp) {
-        //     res.send(error(203, "Wrong OTP"));
-        //     return;
-        // }
-        // const hashedpassword = await bcrypt.hash(password, 10);
-        // const User = await user.create({
-        //     firstName,
-        //     lastName,
-        //     email,
-        //     password: hashedpassword
-        // })
-        // await User.save();
-        // // return res.status(201).json({
-        // //     User,
-        // // })
-        // return res.send(success(201, { User }))
+        const existing_customer = await CustomerDetails.findOne({ email });
+        if (existing_customer) res.send(error(500, "Email already used!"));
+
+        const newCustomer = await CustomerDetails.create({
+            customer_name,
+            email,
+            mobile,
+            city
+        })
+        
+        await newCustomer.save();
+
+        res.send(success(201, { newCustomer }));
+
     } catch (error) {
         console.log(error);
+        res.send(error(500, "Something Went Wrong"));
     }
 }
+
+
+export const addShippingDetails = async (req, res) => {
+    try {
+        const { address, city, pincode, purchase_order_id, customer_id } = req.body;
+
+        const newShippment = await ShippingDetails.create({
+            address,
+            city,
+            pincode,
+            purchase_order_id,
+            customer_id
+        })
+        
+        await newShippment.save();
+
+        res.send(success(201, { newShippment }));
+        
+    } catch (error) {
+        console.log(error);
+        res.send(error(500, "Something Went Wrong"));
+    }
+}
+
