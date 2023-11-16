@@ -2,6 +2,11 @@ import { Schema, model } from "mongoose";
 import mongoose from "mongoose";
 
 const customerSchema = Schema({
+  customer_id: {
+    type: String,
+    default: new mongoose.Types.ObjectId(),
+    unique: true,
+  },
   customer_name: {
     type: String,
     require: true,
@@ -17,11 +22,6 @@ const customerSchema = Schema({
   city: {
     type: String,
     require: true,
-  },
-  customer_id: {
-    type: String,
-    default: new mongoose.Types.ObjectId(),
-    unique: true,
   },
 });
 
