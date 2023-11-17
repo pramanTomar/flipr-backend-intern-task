@@ -3,6 +3,8 @@ import PurchaseDetails from "../models/purchase.js";
 import ShippingDetails from "../models/shippingDetails.js";
 import { error, success } from "../Utils/response.js";
 
+
+//Controller for API No 1
 export const addCustomer = async (req, res) => {
   try {
     const { customer_name, email, mobile, city } = req.body;
@@ -31,6 +33,7 @@ export const addCustomer = async (req, res) => {
   }
 };
 
+// Controller for API No 2
 export const addShippingDetails = async (req, res) => {
   try {
     const { address, city, pincode, purchase_order_id, customer_id } = req.body;
@@ -51,6 +54,8 @@ export const addShippingDetails = async (req, res) => {
     res.send(error(500, "Something Went Wrong"));
   }
 };
+
+// Controller for API No 3
 export const addPurchaseDetails = async (req, res) => {
   try {
     const {
@@ -80,81 +85,31 @@ export const addPurchaseDetails = async (req, res) => {
   }
 };
 
-export const customer_all_purchaseOrder = async (req, res) => {
-  try {
-    const response = await CustomerDetails.aggregate([
-      {
-        $lookup: {
-          from: "purchases", // The name of the collection to join with
-          localField: "customer_id", // The field from the customer collection
-          foreignField: "customer_id", // The field from the purchase_order_details collection
-          as: "purchaseOrders", // The alias for the result array
-        },
-      },
-      {
-        $project: {
-          _id: 0, // Exclude the _id field from the result
-          customer_id: 1,
-          customer_name: 1,
-          email: 1,
-          mobile: 1,
-          city: 1,
-          // Include other customer fields as needed
-          purchaseOrders: {
-            $map: {
-              input: "$purchaseOrders",
-              as: "order",
-              in: {
-                purchaseOrderId: "$$order.purchase_order_id",
-                productName: "$$order.product_name",
-                pricing: "$$order.pricing",
-                quantity: "$$order.quantity",
-                mrp: "$$order.mrp",
-                // Include other purchase order fields as needed
-              },
-            },
-          },
-        },
-      },
-    ]);
-    res.send(success(201, response));
-  } catch (error) {
-    console.log(error);
-    res.send(error(500, "something went wrong"));
-  }
-};
-
+// Controller for API No 4
 export const getCustomersWithCityFilter = async (req, res) => {
   try {
     const city = req.headers.city;
     console.log("city is : ", city);
     const result = await CustomerDetails.aggregate([
       {
-        $match: { city: city }, // Filter customers based on the city
+        $match: { city: city }, 
       },
       {
         $lookup: {
-          from: "shippingdetails", // The name of the collection to join with
-          localField: "customer_id", // The field from the customer collection
-          foreignField: "customer_id", // The field from the shipping_details collection
-          as: "shipmentDetails", // The alias for the result array
+          from: "shippingdetails", 
+          localField: "customer_id", 
+          foreignField: "customer_id", 
+          as: "shipmentDetails", 
         },
       },
       {
         $project: {
-          _id: 0, // Exclude the _id field from the result
+          _id: 0,  
           customer_name: 1,
           email: 1,
           mobile: 1,
           city: 1,
           customer_id: 1,
-          //   shipmentDetails: {
-          //     $filter: {
-          //       input: "$shipmentDetails",
-          //       as: "shipment",
-          //       cond: { $eq: ["$$shipment.city", city] }, // Filter shipment details based on city
-          //     },
-          //   },
           shipmentDetails: {
             $map: {
               input: "$shipmentDetails",
@@ -178,6 +133,50 @@ export const getCustomersWithCityFilter = async (req, res) => {
   }
 };
 
+// Controller for API No 5
+export const customer_all_purchaseOrder = async (req, res) => {
+  try {
+    const response = await CustomerDetails.aggregate([
+      {
+        $lookup: {
+          from: "purchases", 
+          localField: "customer_id", 
+          foreignField: "customer_id", 
+          as: "purchaseOrders", 
+        },
+      },
+      {
+        $project: {
+          _id: 0, 
+          customer_id: 1,
+          customer_name: 1,
+          email: 1,
+          mobile: 1,
+          city: 1,
+          purchaseOrders: {
+            $map: {
+              input: "$purchaseOrders",
+              as: "order",
+              in: {
+                purchaseOrderId: "$$order.purchase_order_id",
+                productName: "$$order.product_name",
+                pricing: "$$order.pricing",
+                quantity: "$$order.quantity",
+                mrp: "$$order.mrp",
+              },
+            },
+          },
+        },
+      },
+    ]);
+    res.send(success(201, response));
+  } catch (error) {
+    console.log(error);
+    res.send(error(500, "something went wrong"));
+  }
+};
+
+// Controller for API No 6
 export const getCustomerWithOrdersAndShipments = async (req, res) => {
   try {
     const response = await CustomerDetails.aggregate([
@@ -190,7 +189,7 @@ export const getCustomerWithOrdersAndShipments = async (req, res) => {
         },
       },
       {
-        $unwind: "$purchaseOrders", // Unwind the purchaseOrders array to de-normalize the data
+        $unwind: "$purchaseOrders", 
       },
       {
         $lookup: {
